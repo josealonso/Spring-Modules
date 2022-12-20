@@ -151,6 +151,67 @@ public static void main(String[] args) {
 }
 ```
 
+#### Differences between @Bean and @Component
+
+If we mark a class with @Component or one of the other Stereotype annotations, 
+these classes will be auto-detected using classpath scanning.
+- Control of wiring is quite limited with this approach since it's purely declarative. 
+- The stereotype annotations are class level annotations.
+
+@Bean is used to explicitly declare a single bean, rather than letting Spring do it automatically like we did with @Controller. 
+It decouples the declaration of the bean from the class definition and lets you create and configure beans exactly how you choose. 
+- Typically, @Bean methods are declared within @Configuration classes.
+- It is a method level annotation.
+
+```
+package com.beanvscomponent;
+
+public class User {
+
+private String first;
+private String last;
+
+public User(String first, String last) {
+    this.first = first;
+    this.last = last;
+   }
+}
+```
+
+```
+package com.beanvscomponent;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ApplicationConfig {
+
+@Bean   // The name of the method is actually going to be the name of the bean.
+public User superUser() {
+    return new User("Partho","Bappy");
+   }
+
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
