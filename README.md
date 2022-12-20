@@ -109,4 +109,49 @@ But instantiated Spring beans have a singleton scope by default. The child metho
 checks the Spring container first for any cached (scoped) beans before it 
 calls the parent method and creates a new instance.
 
+#### Import config files
+
+Spring provides the @Import annotation which allows for loading @Bean definitions from another configuration class.
+
+```
+@Configuration
+public class ConfigA {
+
+    @Bean
+    public A a() {
+        return new A();
+    }
+}
+
+@Configuration
+public class ConfigB {
+
+    @Bean
+    public B b() {
+        return new B();
+    }
+}
+
+@Configuration
+@Import(value = {ConfigA.class, ConfigB.class) 
+public class ConfigD {
+
+    @Bean("classD")
+    public D d() {
+        return new D();
+    }
+}
+```
+
+```
+public static void main(String[] args) {
+    ApplicationContext ctx = new AnnotationConfigApplicationContext(ConfigB.class);
+
+    D d = ctx.getBean(classD);
+}
+```
+
+
+
+
 
