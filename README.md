@@ -1,3 +1,34 @@
+## What is Spring
+
+
+- Spring is a framework for dependency-injection which is a pattern that allows to build very decoupled systems.
+
+- The Spring Framework is divided into modules.
+   
+- Applications can choose which modules they need.
+
+- At the heart are the modules of the core container, including a configuration model and a dependency injection mechanism.
+
+### Spring Releases
+
+    Spring 1     : 2004
+    Spring 2     : 2006
+    Spring 3     : 2009
+    Spring 4     : 2013
+    Spring 4.3   : 2016
+    Spring 5     : 2017
+    Spring 6     : 2022
+
+### Version Changes
+
+    Spring 2.0 provided XML namespaces and AspectJ support.
+    Spring 2.5 embraced annotation-driven configuration.
+    Spring 3.0 introduced a strong Java 5+ foundation across the framework codebase, and features such as the Java-based @Configuration model.
+    Version 4.0 was first to fully support Java 8 features.
+    You can still use Spring with older versions of Java, however, the minimum requirement has now been raised to Java SE 6.
+
+
+## Spring Core Annotations
 
 ### Configuration and Bean annotations
 
