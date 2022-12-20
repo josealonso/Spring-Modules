@@ -195,6 +195,18 @@ public User superUser() {
 }
 ```
 
+### Stereotype Annotations
+
+They are: @Component, @Controller, @Repository, @Service.
+
+- @Repository’s job is to catch platform-specific exceptions and re-throw them as one of Spring’s unified unchecked exceptions.
+- @Service is only a business service facade.
+It does not provide any additional behavior over the @Component annotation.
+- @Controller is a stereotype for the presentation layer (spring-mvc).
+Dispatcher will scan these annotated classes for mapped methods, detecting @RequestMapping annotations.
+
+Spring’s component-scan only scans **@Component** and does not look for @Controller, 
+@Service and @Repository directly. They are scanned because they are annotated with @Component.
 
 
 
