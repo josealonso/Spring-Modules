@@ -3,10 +3,11 @@ package info.josealonso.springbatchdemo.config;
 import info.josealonso.springbatchdemo.entity.Customer;
 import info.josealonso.springbatchdemo.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
@@ -22,8 +23,10 @@ import org.springframework.core.io.FileSystemResource;
 @AllArgsConstructor
 public class SpringBatchConfig {
 
-    private JobBuilderFactory jobBuilderFactory;
-    private StepBuilderFactory stepBuilderFactory;
+    // private JobBuilderFactory jobBuilderFactory;  // deprecated in Spring 6
+    private JobBuilder jobBuilder;
+    // private StepBuilderFactory stepBuilderFactory;  // deprecated in Spring 6
+    private SimpleStepBuilder stepBuilder;
     private CustomerRepository customerRepository;
 
     @Bean
@@ -64,4 +67,17 @@ public class SpringBatchConfig {
         return writer;
     }
 
+    @Bean
+    public Step step1() {
+        return stepBuilder.chunk(10)
+                .reader(reader())
+                .writer(writer())
+                .build();
+    }
+
+    public Job runJob() {
+        return jobBuilder
+                .flow(step1())
+                .end().build();
+    }
 }
