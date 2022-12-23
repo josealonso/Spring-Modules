@@ -69,7 +69,7 @@ public class SpringBatchConfig {
 
     @Bean
     public Step step1() {
-        return stepBuilder.chunk(10)
+        return  stepBuilder.chunk(10)
                 .reader(reader())
                 .writer(writer())
                 .build();
@@ -78,6 +78,7 @@ public class SpringBatchConfig {
     public Job runJob() {
         return jobBuilder
                 .flow(step1())
+                // .next(step1())   // A job can have multiple steps
                 .end().build();
     }
 }
