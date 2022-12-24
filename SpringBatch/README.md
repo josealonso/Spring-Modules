@@ -21,3 +21,8 @@ Step has three components
 
 - ItemWriter
 
+#### Partitioning
+
+Split the task into multiple threads to process a range of data sets.
+Better performance.
+

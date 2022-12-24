@@ -1,12 +1,15 @@
 package info.josealonso.springbatchdemo.config;
 
 import info.josealonso.springbatchdemo.entity.Customer;
+import info.josealonso.springbatchdemo.partition.ColumnRangePartitioner;
 import info.josealonso.springbatchdemo.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.partition.PartitionHandler;
+import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -19,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 @EnableBatchProcessing
@@ -70,7 +74,21 @@ public class SpringBatchConfig {
     }
 
     @Bean
-    public Step step1() {
+    public ColumnRangePartitioner partitioner() {
+        return new ColumnRangePartitioner();
+    }
+
+    @Bean
+    public PartitionHandler partitionHandler() {
+        TaskExecutorPartitionHandler taskExecutorPartitionHandler = new TaskExecutorPartitionHandler();
+        taskExecutorPartitionHandler.setGridSize(2);
+        taskExecutorPartitionHandler.setTaskExecutor(taskExecutor());
+        taskExecutorPartitionHandler.setStep(slaveStep());
+        return taskExecutorPartitionHandler;
+    }
+
+    @Bean
+    public Step slaveStep() {
         return stepBuilder.chunk(10)
                 .reader(reader())
                 .writer(writer())
@@ -81,15 +99,27 @@ public class SpringBatchConfig {
     @Bean
     public Job runJob() {
         return jobBuilder
-                .flow(step1())
+                .flow(slaveStep())
                 // .next(step1())   // A job can have multiple steps
                 .end().build();
     }
 
     @Bean
     public TaskExecutor taskExecutor() {
-        SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
-        asyncTaskExecutor.setConcurrencyLimit(10);
-        return asyncTaskExecutor;
+        final int POOL_SIZE = 4;
+        ThreadPoolTaskExecutor taskExecutor= new ThreadPoolTaskExecutor();
+        taskExecutor.setMaxPoolSize(POOL_SIZE);
+        taskExecutor.setCorePoolSize(POOL_SIZE);
+        taskExecutor.setQueueCapacity(POOL_SIZE);
+        return taskExecutor;
     }
 }
+
+
+
+
+
+
+
+
+
