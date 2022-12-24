@@ -75,6 +75,7 @@ public class SpringBatchConfig {
                 .build();
     }
 
+    @Bean
     public Job runJob() {
         return jobBuilder
                 .flow(step1())
