@@ -6,3 +6,6 @@ spring:
           google:
             client-id: PLACEHOLDER
             client-secret: PLACEHOLDER
+logging:
+  level:
+    org.springframework.security: TRACE
