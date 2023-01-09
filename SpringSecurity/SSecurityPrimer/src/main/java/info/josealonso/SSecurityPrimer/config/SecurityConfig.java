@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -29,6 +31,7 @@ public class SecurityConfig {
                 })
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
+                .addFilterBefore(new RobotFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
