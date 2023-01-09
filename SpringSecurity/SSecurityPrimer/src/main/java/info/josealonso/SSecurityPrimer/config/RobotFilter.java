@@ -17,6 +17,6 @@ public class RobotFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         System.out.println("Hello from the ROBOT FILTER");
-
+        filterChain.doFilter(request, response);
     }
 }
