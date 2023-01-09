@@ -35,7 +35,7 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(
                 User.builder()
                         .username("user")
-                        .password("passwd")
+                        .password("{noop}passwd")
                         .authorities("ROLE_user")
                         .build()
         );
