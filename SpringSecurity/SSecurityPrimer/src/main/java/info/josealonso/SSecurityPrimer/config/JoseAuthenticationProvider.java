@@ -17,7 +17,7 @@ public class JoseAuthenticationProvider implements AuthenticationProvider {
                     AuthorityUtils.createAuthorityList("ROLE_admin")
             );
         }
-        return null;
+        return null;  // This means we delegate the request
     }
 
     @Override

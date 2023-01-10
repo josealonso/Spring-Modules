@@ -1,7 +1,11 @@
 package info.josealonso.SSecurityPrimer.config;
 
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 // public class SecurityConfig extends WebSecurityConfigurerAdapter {   // deprecated
@@ -21,7 +27,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            AuthenticationEventPublisher publisher
+    ) throws Exception {
+
+        var authManager = new ProviderManager(new RobotAuthenticationProvider(List.of("beep-boop", "beep-beep")));
+        authManager.setAuthenticationEventPublisher(publisher);
+
         return http
                 .authorizeRequests(authorizeConfig -> {
                     authorizeConfig.antMatchers("/").permitAll();
@@ -31,7 +44,7 @@ public class SecurityConfig {
                 })
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
-                .addFilterBefore(new RobotFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RobotFilter(authManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(new JoseAuthenticationProvider())
                 .build();
     }
@@ -45,5 +58,17 @@ public class SecurityConfig {
                         .authorities("ROLE_user")
                         .build()
         );
+    }
+
+    @Bean
+    public ApplicationListener<AuthenticationSuccessEvent> successListener() {
+        return event -> {
+            System.out.println(
+                    String.format("\n SUCCESS [%s] %s",
+                            event.getAuthentication().getClass().getSimpleName(),
+                            event.getAuthentication().getName()
+                    )
+            );
+        };
     }
 }
