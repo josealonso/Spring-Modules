@@ -57,3 +57,24 @@ In general, you should create your own authentication rules here, not using a wh
 A configurer allows you to **configure the filter chain** and do multiple operations on the HttpBuilder 
 **with one call**.
 
+```
+http
+   .formLogin(withDefaults())
+   ..........
+```
+
+is equivalent to
+
+```
+http
+   .formLogin().and()
+   ..........
+```
+
+which is equivalent to
+
+```
+http
+   .formLogin(configurer -> ())
+   ..........
+```

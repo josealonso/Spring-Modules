@@ -32,8 +32,9 @@ public class SecurityConfig {
             AuthenticationEventPublisher publisher
     ) throws Exception {
 
-        var authManager = new ProviderManager(new RobotAuthenticationProvider(List.of("beep-boop", "beep-beep")));
-        authManager.setAuthenticationEventPublisher(publisher);
+        var configurer = new RobotLoginConfigurer()
+                .password("beep-boop")
+                .password("beep-beep");
 
         return http
                 .authorizeRequests(authorizeConfig -> {
@@ -44,7 +45,7 @@ public class SecurityConfig {
                 })
                 .formLogin(withDefaults())
                 .oauth2Login(withDefaults())
-                .addFilterBefore(new RobotFilter(authManager), UsernamePasswordAuthenticationFilter.class)
+                .apply(configurer).and()
                 .authenticationProvider(new JoseAuthenticationProvider())
                 .build();
     }
